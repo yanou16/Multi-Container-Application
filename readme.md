@@ -10,9 +10,11 @@
 ## 📌 Project Overview   
 The goal of this project is to practice using Docker Compose to run a multi-container application in production.   
 It uses Docker Compose to run a **Node.js application** and a **MongoDB database**.   
-  
+  <img width="1482" height="729" alt="image" src="https://github.com/user-attachments/assets/05185420-baf0-4eba-ad7a-1884b80f805b" />
+<img width="1461" height="646" alt="image" src="https://github.com/user-attachments/assets/8ec3b797-9d57-4740-bcdf-fd75af1917d4" />
+
 --- 
-  
+  https://roadmap.sh/projects/multi-container-service
 ## 📋 Requirements   
   
 This project implements a simple unauthenticated Node.js API service for creating a todo list. 
