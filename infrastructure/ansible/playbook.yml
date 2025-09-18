@@ -1,0 +1,137 @@
+---
+- name: Configurer le serveur avec Docker et déployer l'application
+  hosts: all
+  become: yes
+
+  pre_tasks:
+    - name: Installer rsync sur la VM
+      apt:
+        name: rsync
+        state: present
+        update_cache: yes
+
+  roles:
+    - docker
+
+  tasks:
+    - name: Créer le répertoire de l'application
+      file:
+        path: /home/{{ ansible_user }}/app
+        state: directory
+
+    - name: Synchroniser les fichiers de l'application
+      ansible.posix.synchronize:
+        src: ../../todo-api/
+        dest: /home/{{ ansible_user }}/app/
+        rsync_opts:
+          - "--exclude=node_modules"
+          - "--exclude=.git"
+
+    # Vérifier que le Dockerfile existe
+    - name: Vérifier que le Dockerfile existe
+      stat:
+        path: /home/{{ ansible_user }}/app/Dockerfile
+      register: dockerfile_check
+
+    - name: Afficher un message si le Dockerfile n'existe pas
+      debug:
+        msg: "ATTENTION: Le Dockerfile n'existe pas dans le répertoire de l'application!"
+      when: not dockerfile_check.stat.exists
+
+    - name: Copier le fichier docker-compose.yml
+      template:
+        src: templates/docker-compose.yml.j2
+        dest: /home/{{ ansible_user }}/app/docker-compose.yml
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Modifier le Dockerfile pour utiliser node directement au lieu de nodemon
+      lineinfile:
+        path: /home/{{ ansible_user }}/app/Dockerfile
+        regexp: '^CMD \["npm", "run", "dev"\]'
+        line: 'CMD ["node", "server.js"]'
+        state: present
+        backup: yes
+
+    - name: Modifier le fichier app.js pour utiliser l'URL complète dans les requêtes API
+      replace:
+        path: /home/{{ ansible_user }}/app/public/app.js
+        regexp: "fetch\\('\/todos"
+        replace: "fetch(window.location.origin + '/todos"
+        backup: yes
+
+    - name: Vérifier que le service Docker est actif
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Arrêter et supprimer les conteneurs existants si nécessaire
+      become: yes
+      become_user: "{{ ansible_user }}"
+      shell: |
+        docker stop todo-api || true
+        docker rm todo-api || true
+      args:
+        executable: /bin/bash
+      ignore_errors: yes
+
+    - name: Construire l'image todo-api
+      become: yes
+      become_user: "{{ ansible_user }}"
+      shell: |
+        cd /home/{{ ansible_user }}/app
+        docker build -t todo-api .
+      args:
+        executable: /bin/bash
+      register: build_result
+
+    - name: Afficher les logs de construction
+      debug:
+        var: build_result.stdout_lines
+      when: build_result.stdout_lines is defined
+
+    - name: Créer le réseau Docker si nécessaire
+      become: yes
+      become_user: "{{ ansible_user }}"
+      shell: docker network create todo-network || true
+      args:
+        executable: /bin/bash
+      ignore_errors: yes
+
+    - name: Démarrer le conteneur MongoDB
+      become: yes
+      become_user: "{{ ansible_user }}"
+      shell: |
+        docker stop mongodb || true
+        docker rm mongodb || true
+        docker run -d --name mongodb --network todo-network -p 27017:27017 -v mongodb_data:/data/db mongo:4.4
+      args:
+        executable: /bin/bash
+
+    - name: Démarrer le conteneur todo-api
+      become: yes
+      become_user: "{{ ansible_user }}"
+      shell: |
+        docker run -d --name todo-api --network todo-network -p 3000:3000 -e MONGO_URL=mongodb://mongodb:27017/todos todo-api
+      args:
+        executable: /bin/bash
+      register: api_result
+
+    - name: Afficher les logs du démarrage de l'API
+      debug:
+        var: api_result.stdout_lines
+      when: api_result.stdout_lines is defined
+
+    - name: Vérifier l'état des conteneurs
+      become: yes
+      become_user: "{{ ansible_user }}"
+      shell: docker ps -a
+      args:
+        executable: /bin/bash
+      register: docker_ps
+
+    - name: Afficher l'état des conteneurs
+      debug:
+        var: docker_ps.stdout_lines
