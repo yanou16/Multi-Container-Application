@@ -1,3 +1,44 @@
+# 🐳 Docker Compose Todo API 
+  
+[![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/)  
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)  
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)  
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions)  
+  
+--- 
+  
+## 📌 Project Overview   
+The goal of this project is to practice using Docker Compose to run a multi-container application in production.   
+It uses Docker Compose to run a **Node.js application** and a **MongoDB database**.   
+  
+--- 
+  
+## 📋 Requirements   
+  
+This project implements a simple unauthenticated Node.js API service for creating a todo list. 
+  
+### Endpoints 
+- `GET /todos` — get all todos   
+- `POST /todos` — create a new todo   
+- `GET /todos/:id` — get a single todo by id   
+- `PUT /todos/:id` — update a single todo by id   
+- `DELETE /todos/:id` — delete a single todo by id   
+  
+The API connects to MongoDB to store the todo items.   
+- Framework: **Express**   
+- ODM: **Mongoose**   
+- Dev tool: **Nodemon** for auto-restarts   
+  
+--- 
+  
+## 🏗️ Implementation   
+  
+### 📂 Project Structure   
+  
+```
+
+<File before editing>
+```markdown
 # Docker Compose Todo API
 ## Project Overview
 The goal of this project is to practice using Docker Compose to run a multi-container application in production. It uses Docker Compose to run a Node.js application and a MongoDB database.
@@ -242,3 +283,46 @@ port 3000
 - Data is persisted in a Docker 
 
 ```
+
+## 🚀 CI/CD Pipeline (GitHub Actions) 
+  
+The project uses GitHub Actions to automate deployment on every push to main. 
+### 🔧 Workflow Overview 
+  
+- Trigger: Push to main  
+- Runs on: Ubuntu VM  
+- Steps:  
+  - Checkout code  
+  - Configure SSH  
+  - Install Ansible  
+  - Run playbook  
+  
+### 🔑 Required Secrets 
+  
+Set these secrets in GitHub → Settings > Secrets and variables > Actions: 
+  
+- SSH_PRIVATE_KEY → Private SSH key for server access  
+- SSH_KNOWN_HOSTS → Server fingerprint (ssh-keyscan -H <server_ip>)  
+- ANSIBLE_INVENTORY → Ansible inventory content  
+  
+### ✅ Deployment Flow 
+  
+- Push code → triggers pipeline  
+- GitHub Actions connects to server  
+- Ansible deploys updated app  
+- Containers rebuild/restart if needed  
+  
+### 📈 Benefits of CI/CD 
+  
+- ⚡ Automation: No manual deploys  
+- 🛡 Consistency: Same process every time  
+- 🚀 Speed: Fast delivery to production  
+- 📜 Traceability: Deployment history in GitHub  
+  
+### 🌐 Accessing the Deployed Application
+
+Once deployed, the application is accessible at:
+```
+http://<VM_IP_ADDRESS>:3000
+```
+
