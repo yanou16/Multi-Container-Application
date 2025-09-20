@@ -320,7 +320,7 @@ Set these secrets in GitHub → Settings > Secrets and variables > Actions:
 - 🛡 Consistency: Same process every time  
 - 🚀 Speed: Fast delivery to production  
 - 📜 Traceability: Deployment history in GitHub  
-  
+  have to
 ### 🌐 Accessing the Deployed Application
 
 Once deployed, the application is accessible at:
