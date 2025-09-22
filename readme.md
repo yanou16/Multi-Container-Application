@@ -10,6 +10,8 @@
 ## 📌 Project Overview   
 The goal of this project is to practice using Docker Compose to run a multi-container application in production.   
 It uses Docker Compose to run a **Node.js application** and a **MongoDB database**.   
+<img width="823" height="544" alt="image" src="https://github.com/user-attachments/assets/1d780f4b-6006-4342-94f8-b70e7fa92874" />
+
   <img width="1482" height="729" alt="image" src="https://github.com/user-attachments/assets/05185420-baf0-4eba-ad7a-1884b80f805b" />
 <img width="1461" height="646" alt="image" src="https://github.com/user-attachments/assets/8ec3b797-9d57-4740-bcdf-fd75af1917d4" />
 
