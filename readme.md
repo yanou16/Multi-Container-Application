@@ -41,27 +41,10 @@ The API connects to MongoDB to store the todo items.
   
 ```
 
-<File before editing>
-```markdown
-# Docker Compose Todo API
-## Project Overview
-The goal of this project is to practice using Docker Compose to run a multi-container application in production. It uses Docker Compose to run a Node.js application and a MongoDB database.
 
-## Requirements
-This project implements a simple unauthenticated Node.js API service for creating a todo list. The API has the following endpoints:
 
-- GET /todos — get all todos
-- POST /todos — create a new todo
-- GET /todos/:id — get a single todo by id
-- PUT /todos/:id — update a single todo by id
-- DELETE /todos/:id — delete a single todo by id
-The API connects to MongoDB to store the todo items. It uses Express for the API and Mongoose to connect to MongoDB. Nodemon is used to automatically restart the server when the source code changes.
 
-## Implementation
-### Project Structure
-```
 
-<File before editing>
 ```markdown
 # Docker Compose Todo API
 ## Project Overview
